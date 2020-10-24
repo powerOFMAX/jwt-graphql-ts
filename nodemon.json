@@ -1,0 +1,11 @@
+{
+  "ignore": [
+    "node_modules"
+  ],
+  "watch": [
+    "api",
+    "yarn.lock"
+  ],
+  "exec": "babel-node --extensions \".ts\" api/index.ts",
+  "ext": "ts"
+}
