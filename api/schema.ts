@@ -20,12 +20,18 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(input: UserCredentials!): String
-    login(input: UserCredentials!): String
+    signup(input: UserCredentials!): AuthResponse
+    login(input: UserCredentials!): AuthResponse
   }
 
   type Query {
     users: [User!]
+  }
+
+  type AuthResponse {
+    token: String
+    email: String
+    name: String
   }
 `;
 
@@ -58,11 +64,12 @@ const resolvers = {
       });
 
       // return json web token
-      return jsonwebtoken.sign(
+      const token = jsonwebtoken.sign(
         { id: newUser.id, email: newUser.email },
         JWT_SECRET,
         { expiresIn: TOKEN_EXPIRATION }
       );
+      return {name, email, token}
     },
 
     // Handles user login
@@ -81,14 +88,15 @@ const resolvers = {
       }
 
       // return json web token
-      const value = jsonwebtoken.sign(
+      const token = jsonwebtoken.sign(
         { id: user.id, email: user.email },
         JWT_SECRET,
         {
           expiresIn: TOKEN_EXPIRATION,
         }
       );
-      return value;
+      const { name } = user
+      return {name, email, token};
     },
   },
   Query: {
